@@ -10,8 +10,17 @@
     <div class="wrapper">
     <nav class="navbar" role="navigation">
         <span class="logo">Student Attendance Tracker</span>
-        <button class="hamburger" id="menu-btn">☰</button>
+        <div class="nav-buttons">
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="register.html" class="nav-link">Register</a>
+            <button class="hamburger" id="menu-btn">☰</button>
+        </div>
     </nav>
+    <div class="user-popup" id="user-popup" style="display: none;">
+        <p id="user-name"></p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
     <div class="overlay" id="menu-overlay">
         <ul>
             <li><a href="attendance.html">Attendance Marker</a></li>

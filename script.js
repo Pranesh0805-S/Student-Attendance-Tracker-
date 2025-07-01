@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-
+  // ===== Hamburger Menu =====
   const menuBtn = document.getElementById('menu-btn');
   const menuOverlay = document.getElementById('menu-overlay');
 
@@ -16,7 +16,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // ===== Navbar User UI Toggle (Login State) =====
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navButtons = document.getElementById("nav-buttons");
 
+  if (user && navButtons) {
+    navButtons.innerHTML = `
+      <div class="user-icon" id="user-icon">${user.name.charAt(0).toUpperCase()}</div>
+      <button class="hamburger" id="menu-btn">☰</button>
+    `;
+
+    // Re-bind hamburger click (since it's dynamically inserted)
+    const newMenuBtn = document.getElementById('menu-btn');
+    if (newMenuBtn && menuOverlay) {
+      newMenuBtn.addEventListener('click', () => {
+        menuOverlay.style.display = (menuOverlay.style.display === 'block') ? 'none' : 'block';
+      });
+    }
+
+    // User icon popup toggle
+    const userIcon = document.getElementById("user-icon");
+    const userPopup = document.getElementById("user-popup");
+    const userNameTag = document.getElementById("user-name");
+
+    if (userIcon && userPopup && userNameTag) {
+      userIcon.addEventListener("click", () => {
+        userNameTag.textContent = "Logged in as: " + user.name;
+        userPopup.style.display = userPopup.style.display === "none" ? "block" : "none";
+      });
+    }
+  }
+
+  // ===== Logout Function (Accessible Globally) =====
+  window.logout = function () {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  };
+
+  // ===== Attendance Marker Form =====
   const attendanceForm = document.getElementById('attendance-form');
   if (attendanceForm) {
     attendanceForm.addEventListener('submit', function (e) {
@@ -34,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
       const key = `attendance-${date}`;
       const existingData = JSON.parse(localStorage.getItem(key)) || {};
 
-      // ✅ If "All Period" selected, save for all period-0 to period-5
       if (period === 'all') {
         for (let i = 0; i <= 5; i++) {
           existingData[`period-${i}`] = status;
@@ -45,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       localStorage.setItem(key, JSON.stringify(existingData));
 
-
       const msg = document.getElementById('message');
       msg.innerText = `Attendance saved for ${date}${period === 'all' ? ' (All Periods)' : ' - Period ' + period}`;
       msg.style.color = 'green';
@@ -53,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-
+  // ===== Attendance Calculator Summary =====
   const daysPresentSpan = document.getElementById('days-present');
   const daysAbsentSpan = document.getElementById('days-absent');
   const percentageSpan = document.getElementById('percentage');
@@ -78,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
     daysAbsentSpan.textContent = absent;
     percentageSpan.textContent = `${percent}%`;
 
-
     const copyBtn = document.getElementById('copy-btn');
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
@@ -96,11 +130,12 @@ document.addEventListener('DOMContentLoaded', function () {
           const keys = Object.keys(localStorage).filter(k => k.startsWith('attendance-'));
           keys.forEach(k => localStorage.removeItem(k));
           alert('All attendance records cleared.');
-          location.reload(); // Refresh the summary
+          location.reload();
         }
       });
     }
-        const downloadBtn = document.getElementById('download-txt-btn');
+
+    const downloadBtn = document.getElementById('download-txt-btn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', () => {
         const attendanceKeys = Object.keys(localStorage).filter(k => k.startsWith('attendance-'));
@@ -110,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         let content = "Attendance Summary:\n\n";
-
         attendanceKeys.forEach(key => {
           const date = key.replace('attendance-', '');
           const data = JSON.parse(localStorage.getItem(key));

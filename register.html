@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Student Attendance Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <nav class="navbar">
+      <span class="logo">Student Attendance Tracker</span>
+      <div class="nav-buttons">
+        <a href="index.html" class="nav-link">Home</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="login-section">
+        <h2>Create a New Account</h2>
+        <form class="register-form">
+          <label for="name">Name</label>
+          <input type="text" id="name" required placeholder="Your Name" />
+
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="Enter your email" />
+
+          <label for="password">Password</label>
+          <input type="password" id="password" required placeholder="Enter password" />
+
+          <label for="confirm">Confirm Password</label>
+          <input type="password" id="confirm" required placeholder="Repeat password" />
+
+          <button type="submit" class="login-btn">Register</button>
+
+          <p class="signup-text">Already have an account? <a href="login.html">Log in</a></p>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    © 2025 Student Attendance Tracker. All rights reserved.
+  </footer>
+
+  <script>
+    document.querySelector('.register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirm = document.getElementById('confirm').value.trim();
+
+      if (password !== confirm) {
+        return alert("Passwords do not match!");
+      }
+
+      try {
+        const res = await fetch('http://localhost:5000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Registration successful!");
+          window.location.href = "login.html";
+        } else {
+          alert(data.message || "Registration failed");
+        }
+      } catch (err) {
+        alert("Server error");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
